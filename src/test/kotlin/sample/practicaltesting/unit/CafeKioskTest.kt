@@ -1,9 +1,11 @@
 package sample.practicaltesting.unit
 
 import org.assertj.core.api.Assertions.assertThat
+import org.assertj.core.api.Assertions.assertThatThrownBy
 import org.junit.jupiter.api.Test
 import sample.practicaltesting.unit.beverage.Americano
 import sample.practicaltesting.unit.beverage.Latte
+import java.time.LocalDateTime
 
 class CafeKioskTest {
 
@@ -23,6 +25,25 @@ class CafeKioskTest {
 
         assertThat(cafeKiosk.getBeverages()).hasSize(1)
         assertThat(cafeKiosk.getBeverages().get(0).getName()).isEqualTo("아메리카노")
+    }
+
+    @Test
+    fun addSeveralBeverages() {
+        val cafeKiosk = CafeKiosk()
+        val americano = Americano()
+        cafeKiosk.add(americano, 2)
+
+        assertThat(cafeKiosk.getBeverages().get(0)).isEqualTo(americano)
+        assertThat(cafeKiosk.getBeverages().get(1)).isEqualTo(americano)
+    }
+
+    @Test
+    fun addZeroBeverages() {
+        val cafeKiosk = CafeKiosk()
+        val americano = Americano()
+
+        assertThatThrownBy { cafeKiosk.add(americano, 0) }.isInstanceOf(IllegalArgumentException::class.java)
+            .hasMessage("음료는 1잔 이상 주문하실 수 있습니다.")
     }
 
     @Test
@@ -49,5 +70,28 @@ class CafeKioskTest {
 
         cafeKiosk.clear()
         assertThat(cafeKiosk.getBeverages()).isEmpty()
+    }
+
+    @Test
+    fun createOrderWithCurrentTime() {
+        val cafeKiosk = CafeKiosk()
+        val americano = Americano()
+
+        cafeKiosk.add(americano)
+        val order = cafeKiosk.crateOrder(LocalDateTime.of(2023,12,12,12,14,0))
+
+        assertThat(order.beverages).hasSize(1)
+        assertThat(order.beverages.get(0).getName()).isEqualTo("아메리카노")
+    }
+
+    @Test
+    fun createOrderOutsideOpenTime() {
+        val cafeKiosk = CafeKiosk()
+        val americano = Americano()
+
+        cafeKiosk.add(americano)
+        assertThatThrownBy { cafeKiosk.crateOrder(LocalDateTime.of(2023,12,12,23,14,0)) }
+            .isInstanceOf(IllegalArgumentException::class.java)
+            .hasMessage("주문 시간이 아닙니다.")
     }
 }

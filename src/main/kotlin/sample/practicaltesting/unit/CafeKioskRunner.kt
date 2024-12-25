@@ -2,6 +2,7 @@ package sample.practicaltesting.unit
 
 import sample.practicaltesting.unit.beverage.Americano
 import sample.practicaltesting.unit.beverage.Latte
+import java.time.LocalDateTime
 
 class CafeKioskRunner {
     companion object {
@@ -17,6 +18,7 @@ class CafeKioskRunner {
             val totalPrice = cafeKiosk.calculateTotalPrice()
             println("총 주문 가격: $totalPrice")
 
+            val order = cafeKiosk.crateOrder(LocalDateTime.now())
         }
     }
 
