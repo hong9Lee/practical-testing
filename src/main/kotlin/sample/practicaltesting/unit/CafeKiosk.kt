@@ -53,5 +53,4 @@ class CafeKiosk {
     }
 
     fun getBeverages(): List<Beverage> = beverages.toList()
-
 }
